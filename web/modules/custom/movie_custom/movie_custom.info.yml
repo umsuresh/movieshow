@@ -1,0 +1,6 @@
+name: Movie  Module
+type: module
+description: 'Custom module.'
+package: Custom
+version: 1.0
+core_version_requirement: ^8 || ^9

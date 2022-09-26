@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Movie custom module file.
+ */
+
+use Drupal\node\Entity\NodeType;
+use Drupal\Core\Link;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_user_register_form_alter().
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+
+function movie_custom_form_user_register_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
+  if ($form_id == 'user-register-form') {
+    $form['pass1'] = array("#title" => t("Password"),
+    "#type" => "password",
+    "#required" => true
+    );
+    $form['pass2'] = array("#title" => t("Confirm Password"),
+    "#type" => "password",
+    "#required" => true
+    );
+  }
+}
+
+
+/**
+ * Implements hook_form_alter().
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function movie_custom_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  if ($form_id == 'user-register-form') {
+    $form['pass1'] = array("#title" => t("Password"),
+    "#type" => "password",
+    "#required" => true
+    );
+    $form['pass2'] = array("#title" => t("Confirm Password"),
+    "#type" => "password",
+    "#required" => true
+    );
+  }
+}
