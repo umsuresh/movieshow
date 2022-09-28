@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for Creating Nodes.
+ */
+
+use Drupal\file\Entity\File;
+use Drupal\node\Entity\Node;
+use Drupal\path_alias\Entity\PathAlias;
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Implements hook_install().
+ */
+function creating_nodes_install() {
+
+  // Create two taxonomy terms.
+  $term_one = Term::create([
+    'vid' => 'tags',
+    'langcode' => 'en',
+    'name' => 'T_1',
+    'description' => [
+      'value' => '<p>Term number one.</p>',
+      'format' => 'full_html',
+    ],
+    'weight' => -1,
+    'parent' => [0],
+  ]);
+  $term_two = Term::create([
+    'vid' => 'tags',
+    'langcode' => 'en',
+    'name' => 'T_2',
+    'description' => [
+      'value' => '<p>Term number two.</p>',
+      'format' => 'full_html',
+    ],
+    'weight' => 1,
+    'parent' => [0],
+  ]);
+
+  // Saving the taxonomy terms.
+  $term_one->save();
+  $term_two->save();
+
+  // Get all the terms from a taxonomy.
+  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('tags', 0, NULL, FALSE);
+
+  // Create a file.
+  $file = File::create([
+    'uid' => 1,
+    'filename' => 'drupalea.png',
+    'uri' => 'public://creating_nodes_files/drupalea.png',
+    'status' => 1,
+  ]);
+
+  // Save the file item.
+  $file->save();
+
+  // Ask for the current time.
+  $requested_time = \Drupal::time()->getRequestTime();
+
+  // Create a text body for the node.
+  $node_body = "<strong>Lorem fistrum ese que llega mamaar jarl mamaar tiene musho
+                peligro quietooor al ataquerl ese que llega. Diodeno me cago en
+                tus muelas amatomaa al ataquerl ese hombree de la pradera.</strong>
+                Llevame al sircoo diodenoo por la gloria de mi madre llevame al
+                sircoo te voy a borrar el cerito. Está la cosa muy malar papaar
+                papaar condemor ese pedazo de diodeno. <br>
+                Por la gloria de mi madre diodenoo jarl papaar papaar te voy a
+                borrar el cerito la caidita se calle ustée va usté muy cargadoo
+                ese hombree hasta luego Lucas. Apetecan jarl caballo blanco
+                caballo negroorl a peich te va a hasé pupitaa.";
+
+  // Building the new node.
+  $node_article = Node::create([
+    'type' => 'article',
+    'langcode' => 'en',
+    'created' => $requested_time,
+    'changed' => $requested_time,
+    'uid' => 1,
+    'title' => 'Article number one',
+    'field_tags' => $terms[1]->tid,
+    'body' => [
+      'summary' => 'Summary for the node created programmatically.',
+      'value' => $node_body,
+      'format' => 'full_html',
+    ],
+    'field_image' => [
+      [
+        'target_id' => $file->id(),
+        'alt' => 'Alt text for the image',
+        'title' => 'Title for the image',
+      ],
+    ],
+  ]);
+
+  // Save the node.
+  $node_article->save();
+
+  // Create a custom path.
+  $path_alias = PathAlias::create([
+    'path' => '/node/' . $node_article->id(),
+    'alias' => '/newsletter/movie',
+  ]);
+  $path_alias->save();
+
+  // Loading a node using the Drupal Entity API.
+  // Ensure the node exists getting its Node id.
+  $nid = $node_article->id();
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  $node = $node_storage->load($nid);
+  \Drupal::logger('creating_nodes')->notice("Info from the created Node: Nid: @nid and Bundle: @bundle",
+    ['@nid' => $node->id(), '@bundle' => $node->bundle()]);
+
+}
