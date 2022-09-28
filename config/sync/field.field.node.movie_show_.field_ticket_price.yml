@@ -1,0 +1,23 @@
+uuid: 34735c8d-74d2-4d8b-9a46-a029b9cb36ab
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ticket_price
+    - node.type.movie_show_
+id: node.movie_show_.field_ticket_price
+field_name: field_ticket_price
+entity_type: node
+bundle: movie_show_
+label: 'Ticket Fee'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 100
+  max: 250
+  prefix: $
+  suffix: ''
+field_type: integer

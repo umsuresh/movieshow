@@ -1,0 +1,194 @@
+uuid: afe718d5-495d-4495-b4a0-f0259b014824
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.movie_show_.body
+    - field.field.node.movie_show_.field_movie_category
+    - field.field.node.movie_show_.field_movie_image_
+    - field.field.node.movie_show_.field_movie_images_
+    - field.field.node.movie_show_.field_movie_title
+    - field.field.node.movie_show_.field_ticket_price
+    - node.type.movie_show_
+  module:
+    - field_layout
+    - file
+    - image
+    - layout_builder
+    - layout_discovery
+    - text
+    - user
+third_party_settings:
+  field_layout:
+    id: layout_onecol
+    settings:
+      label: ''
+  layout_builder:
+    enabled: true
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: ''
+        components:
+          78276ef0-5878-4109-9dc2-ff9670f6e8a9:
+            uuid: 78276ef0-5878-4109-9dc2-ff9670f6e8a9
+            region: content
+            configuration:
+              id: 'field_block:node:movie_show_:field_movie_title'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: above
+                settings:
+                  link_to_entity: false
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          770ad617-f6a4-439e-a28b-e7aeb6df61f1:
+            uuid: 770ad617-f6a4-439e-a28b-e7aeb6df61f1
+            region: content
+            configuration:
+              id: 'field_block:node:movie_show_:body'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_summary_or_trimmed
+                label: hidden
+                settings:
+                  trim_length: 600
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          de0a1f40-1e13-4f6a-9de9-f7f7970741c5:
+            uuid: de0a1f40-1e13-4f6a-9de9-f7f7970741c5
+            region: content
+            configuration:
+              id: 'field_block:node:movie_show_:field_movie_category'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: entity_reference_label
+                label: above
+                settings:
+                  link: true
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+          8a395860-5035-480e-be27-8e809336862d:
+            uuid: 8a395860-5035-480e-be27-8e809336862d
+            region: content
+            configuration:
+              id: 'field_block:node:movie_show_:field_ticket_price'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: number_integer
+                label: above
+                settings:
+                  thousand_separator: ''
+                  prefix_suffix: true
+                third_party_settings: {  }
+            weight: 3
+            additional: {  }
+          aa73c4db-c7ab-467a-a48d-1485b256279a:
+            uuid: aa73c4db-c7ab-467a-a48d-1485b256279a
+            region: content
+            configuration:
+              id: 'field_block:node:movie_show_:field_movie_image_'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: file_default
+                label: above
+                settings:
+                  use_description_as_link_text: true
+                third_party_settings: {  }
+            weight: 4
+            additional: {  }
+          1eeca8b9-2ed0-4f84-851d-f3276fa7a946:
+            uuid: 1eeca8b9-2ed0-4f84-851d-f3276fa7a946
+            region: content
+            configuration:
+              id: 'field_block:node:movie_show_:field_movie_images_'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: image
+                label: above
+                settings:
+                  image_link: ''
+                  image_style: ''
+                  image_loading:
+                    attribute: lazy
+                third_party_settings: {  }
+            weight: 5
+            additional: {  }
+        third_party_settings: {  }
+id: node.movie_show_.default
+targetEntityType: node
+bundle: movie_show_
+mode: default
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_movie_category:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_movie_image_:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_movie_images_:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_movie_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_ticket_price:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  langcode: true
+  links: true

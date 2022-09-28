@@ -1,0 +1,15 @@
+uuid: 49b37629-c088-4326-ad88-e692fa705f6b
+langcode: en
+status: true
+dependencies: {  }
+name: scale
+label: 'Banner small'
+effects:
+  9f4a3838-d4ae-4a80-a6f1-cd8da97c0704:
+    uuid: 9f4a3838-d4ae-4a80-a6f1-cd8da97c0704
+    id: image_scale
+    weight: 1
+    data:
+      width: 240
+      height: 150
+      upscale: false
