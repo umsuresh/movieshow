@@ -9,7 +9,7 @@ use Drupal\node\Entity\Node;
 
 
 function movie_custom_install() {
-  $data = [
+    $data = [
       'type'=>'article',
       'title'=>'Test blog',
       'uid'=>1
