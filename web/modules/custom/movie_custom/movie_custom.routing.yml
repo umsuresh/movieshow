@@ -1,7 +1,7 @@
 movie_custom.hello:
   path: '/movie/custom'
   defaults:
-    _controller: '\Drupal\movie_custom_module\Controller\MovieCustomController::helloWorld'
+    _controller: '\Drupal\movie_custom\Controller\MovieCustomController::movieshow'
     _title: 'movie Custom First'
   requirements:
     _access: 'TRUE'
