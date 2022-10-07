@@ -15,10 +15,10 @@ class MovieCustomController extends ControllerBase {
    * @return array
    *   Return just an array with a piece of markup to render in screen.
    */
-  public function helloWorld() {
+  public function movieshow() {
 
     return [
-      '#markup' => $this->t('Hello World, I am just a basic custom example.'),
+      '#markup' => $this->t('Movie show !.'),
     ];
   }
 
