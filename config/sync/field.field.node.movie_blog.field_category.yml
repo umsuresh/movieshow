@@ -1,0 +1,21 @@
+uuid: 2a19e9d3-c35d-46ce-a9df-1f81d9d9e1a5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_category
+    - node.type.movie_blog
+  module:
+    - options
+id: node.movie_blog.field_category
+field_name: field_category
+entity_type: node
+bundle: movie_blog
+label: Category
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

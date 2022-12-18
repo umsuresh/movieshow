@@ -1,0 +1,24 @@
+uuid: 3a133173-e4e5-4d4f-b432-240ef787b1ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.movie_article
+  module:
+    - views
+  theme:
+    - olivero
+id: views_block__movie_article_block_1
+theme: olivero
+region: sidebar
+weight: 0
+provider: null
+plugin: 'views_block:movie_article-block_1'
+settings:
+  id: 'views_block:movie_article-block_1'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility: {  }

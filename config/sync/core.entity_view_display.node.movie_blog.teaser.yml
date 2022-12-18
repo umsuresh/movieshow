@@ -1,0 +1,32 @@
+uuid: 96f8c146-17bf-47ba-a63d-28f8683b994a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.movie_blog.body
+    - field.field.node.movie_blog.field_category
+    - node.type.movie_blog
+  module:
+    - text
+    - user
+id: node.movie_blog.teaser
+targetEntityType: node
+bundle: movie_blog
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_category: true
