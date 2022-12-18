@@ -1,8 +1,0 @@
-uuid: eeef73d6-fac2-4a81-b921-c53901a740a9
-langcode: en
-status: true
-dependencies: {  }
-name: 'Movie Category'
-vid: movie_category
-description: ''
-weight: 0

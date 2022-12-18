@@ -9,5 +9,5 @@ fetch:
   timeout: 30
 notification:
   emails:
-    - suresh@test.com
+    - suresh@mailinator.com
   threshold: all

@@ -1,0 +1,6 @@
+name: 'FormValues'
+type: module
+description: 'Demostrate different ways to get values from a form'
+package: 'Custom'
+version: 1.0
+core_version_requirement: ^8 || ^9

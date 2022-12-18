@@ -1,9 +1,9 @@
 _core:
   default_config_hash: VDJxTZtQR21qB4lvOq8zszJZLvLKrSPQpdn2E3T71Ww
 langcode: en
-uuid: a80b8999-258c-4b6b-9e36-7cc6243acc72
-name: movieshow
-mail: suresh@test.com
+uuid: e1960eb1-e4ce-41d4-960f-fd0f3100d86c
+name: 'Drupal tutorial'
+mail: suresh@mailinator.com
 slogan: ''
 page:
   403: ''

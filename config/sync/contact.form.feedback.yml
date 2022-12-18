@@ -1,4 +1,4 @@
-uuid: 9519fe20-4b21-4cba-a99e-1c376a886599
+uuid: c4c977f8-cfdf-4a84-9bde-f681f15cabb2
 langcode: en
 status: true
 dependencies: {  }
@@ -7,7 +7,7 @@ _core:
 id: feedback
 label: 'Website feedback'
 recipients:
-  - suresh@test.com
+  - suresh@mailinator.com
 reply: ''
 weight: 0
 message: 'Your message has been sent.'

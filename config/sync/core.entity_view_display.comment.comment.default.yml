@@ -1,4 +1,4 @@
-uuid: 19e6c3f4-c038-4782-8a33-d52e783b16e3
+uuid: ff15e1f3-f01c-4920-8870-5ceaca22e264
 langcode: en
 status: true
 dependencies:
@@ -6,49 +6,7 @@ dependencies:
     - comment.type.comment
     - field.field.comment.comment.comment_body
   module:
-    - field_layout
-    - layout_builder
-    - layout_discovery
     - text
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings:
-      label: ''
-  layout_builder:
-    enabled: true
-    sections:
-      -
-        layout_id: layout_onecol
-        layout_settings:
-          label: ''
-        components:
-          4149f901-08cd-4a41-8377-8ad8c5e568f4:
-            uuid: 4149f901-08cd-4a41-8377-8ad8c5e568f4
-            region: content
-            configuration:
-              id: 'field_block:comment:comment:comment_body'
-              label_display: '0'
-              context_mapping:
-                entity: layout_builder.entity
-              formatter:
-                type: text_default
-                label: hidden
-                settings: {  }
-                third_party_settings: {  }
-            weight: 0
-            additional: {  }
-          a4d56228-93d7-4449-b2de-2bcb94159c4c:
-            uuid: a4d56228-93d7-4449-b2de-2bcb94159c4c
-            region: content
-            configuration:
-              id: 'extra_field_block:comment:comment:links'
-              label_display: '0'
-              context_mapping:
-                entity: layout_builder.entity
-            weight: 1
-            additional: {  }
-        third_party_settings: {  }
 _core:
   default_config_hash: aBQUGsQ46M4048fIlFuTXwl2zV0j2cJX89CTUobh9hA
 id: comment.comment.default
@@ -64,9 +22,6 @@ content:
     weight: 0
     region: content
   links:
-    settings: {  }
-    third_party_settings: {  }
     weight: 100
     region: content
-hidden:
-  langcode: true
+hidden: {  }
