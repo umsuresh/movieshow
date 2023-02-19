@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for Creating Nodes.
+ */
+
+use Drupal\node\Entity\Node;
+
+
+function movie_custom_install() {
+    $data = [
+      'type'=>'article',
+      'title'=>'Test blog',
+      'uid'=>1
+    ];
+
+    //Drupal::logger('movie_custom')->info('node'.print_r($data));
+    $node = Drupal::entityTypeManager()->getStorage('node')->create($data);
+    $node->save();
+}
+

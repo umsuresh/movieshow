@@ -5,53 +5,95 @@
  * Movie custom module file.
  */
 
-use Drupal\node\Entity\NodeType;
-use Drupal\Core\Link;
-use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\views\ViewExecutable;
-use Drupal\views\Plugin\views\query\QueryPluginBase;
-use Drupal\Core\Url;
-use Drupal\Core\Form\FormStateInterface;
+// use Drupal\node\Entity\NodeType;
+// use Drupal\Core\Link;
+// use Drupal\Core\Entity\ContentEntityInterface;
+// use Drupal\field\Entity\FieldStorageConfig;
+// use Drupal\views\ViewExecutable;
+// use Drupal\views\Plugin\views\query\QueryPluginBase;
+// use Drupal\Core\Url;
+// use Drupal\Core\Form\FormStateInterface;
+// use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityInterface;
+
+// /**
+//  * Implements hook_form_user_register_form_alter().
+//  *
+//  * @param $form
+//  * @param \Drupal\Core\Form\FormStateInterface $form_state
+//  * @param $form_id
+//  */
+
+// function movie_custom_form_user_register_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
+//   if ($form_id == 'user-register-form') {
+//     $form['pass1'] = array("#title" => t("Password"),
+//     "#type" => "password",
+//     "#required" => true
+//     );
+//     $form['pass2'] = array("#title" => t("Confirm Password"),
+//     "#type" => "password",
+//     "#required" => true
+//     );
+//   }
+// }
+
+
+// /**
+//  * Implements hook_form_alter().
+//  *
+//  * @param $form
+//  * @param \Drupal\Core\Form\FormStateInterface $form_state
+//  * @param $form_id
+//  */
+// function movie_custom_form_alter(&$form, FormStateInterface $form_state, $form_id){
+//   if ($form_id == 'user-register-form') {
+//     $form['pass1'] = array("#title" => t("Password"),
+//     "#type" => "password",
+//     "#required" => true
+//     );
+//     $form['pass2'] = array("#title" => t("Confirm Password"),
+//     "#type" => "password",
+//     "#required" => true
+//     );
+//   }
+// }
 
 /**
- * Implements hook_form_user_register_form_alter().
- *
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
+ * Implements hook_node_presave().
+ * @param \Drupal\Core\Entity\EntityInterface $node
  */
 
-function movie_custom_form_user_register_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
-  if ($form_id == 'user-register-form') {
-    $form['pass1'] = array("#title" => t("Password"),
-    "#type" => "password",
-    "#required" => true
-    );
-    $form['pass2'] = array("#title" => t("Confirm Password"),
-    "#type" => "password",
-    "#required" => true
-    );
-  }
+function movie_custom_node_presave(\Drupal\Core\Entity\EntityInterface $node){
+  //$node = \Drupal\node\Entity\Node::load(6);
+  // $node->setTitle('Edited Title');
+  // $node->set('body', 'this is the bew body');
+  // $now = new DateTime();
+  // $created = $now->getTimestamp();
+  // $pub_date = gmdate('Y-m-d\TH:i:s',$created);
+  // $node_save = $node->set('field_published_date',$pub_date);
+
+  // \Drupal::logger('movie_custom')->debug('presave'. $pub_date);
+
+//   $data = [
+//     'type'=>'article',
+//     'title'=>'Test blog',
+//     'uid'=>1
+//   ];
+
+//  //Drupal::logger('movie_custom')->info('node'.print_r($data));
+//   $node = Drupal::entityTypeManager()->getStorage('node')->create($data);
+//   $node->save();
+
+  // if($node->hasField =="field_published_date"){
+  //   $status = $node->get('field_status')->getValue()[0]['value'];
+  //   if(empty($node->get('field_published_date')->getValue())){
+  //     if($status ==1){
+  //       $now = new DateTime();
+  //       $created = $now->getTimestamp();
+  //       \Drupal::logger('movie_custom')->info('presave date==>'.$created);
+  //     }
+  //   }
+  // }
 }
 
-
-/**
- * Implements hook_form_alter().
- *
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
- */
-function movie_custom_form_alter(&$form, FormStateInterface $form_state, $form_id){
-  if ($form_id == 'user-register-form') {
-    $form['pass1'] = array("#title" => t("Password"),
-    "#type" => "password",
-    "#required" => true
-    );
-    $form['pass2'] = array("#title" => t("Confirm Password"),
-    "#type" => "password",
-    "#required" => true
-    );
-  }
-}
