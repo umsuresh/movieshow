@@ -1,0 +1,8 @@
+name: Wallet
+type: module
+description: 'Wallet is a employee wallet block'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: Custom
+dependencies:
+  - block

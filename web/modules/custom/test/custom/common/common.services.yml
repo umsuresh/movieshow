@@ -1,0 +1,6 @@
+services:
+  common.event_subscriber:
+    class: Drupal\common\EventSubscriber\CommonEventSubscriber
+    arguments: []
+    tags:
+      - { name: event_subscriber }

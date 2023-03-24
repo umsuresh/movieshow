@@ -1,0 +1,8 @@
+mylib:
+  css:
+    theme:
+  js:
+    js/model.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

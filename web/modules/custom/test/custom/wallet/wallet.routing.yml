@@ -1,0 +1,23 @@
+wallet.getCurrentStatementData:
+ path: '/current-statement/{mno}'
+ defaults:
+  _controller: '\Drupal\wallet\Controller\WalletController::getCurrentStatementData'
+  _title: 'Wallet Current Statement'
+ requirements:
+  _permission: 'access content'
+
+wallet.getLastRaisedStatementData:
+ path: '/last-raised-statement/{mno}'
+ defaults:
+  _controller: '\Drupal\wallet\Controller\WalletController::getLastRaisedStatementData'
+  _title: 'Wallet Current Statement'
+ requirements:
+  _permission: 'access content'
+
+wallet.getWalletDetailsData:
+ path: '/wallet-details/{mno}'
+ defaults:
+  _controller: '\Drupal\wallet\Controller\WalletController::getWalletDetailsData'
+  _title: 'Wallet Current Statement'
+ requirements:
+  _permission: 'access content'

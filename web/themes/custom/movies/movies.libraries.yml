@@ -1,0 +1,44 @@
+global-styling:
+  version: 1.x
+  css:
+    theme:
+      css/style.css: {}
+      css/layout/movie-node-layout.css: {}   
+
+  header: true         
+  js:    
+    js/global-slider.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings  
+  
+# Case 5: Adding external resources from your libraries.yml file.
+# backbone:
+#   remote: https://github.com/jashkenas/backbone
+#   version: "1.2.3"
+#   license:
+#     name: MIT
+#     url: https://github.com/jashkenas/backbone/blob/1.2.3/LICENSE
+#     gpl-compatible: true
+#   js:
+#     assets/vendor/backbone/backbone-min.js: { weight: -19, minified: true }
+#   dependencies:
+#     - core/underscore
+    
+#  // Case 6: Declaring dependencies
+#  js_library_hide_show:
+#   js:
+#     js/my_custom_javascript_library.js: {}
+#   dependencies:
+#     - core/jquery
+    
+# // Case 7: Fully external library
+# angular.angularjs:
+#   remote: https://github.com/angular/angular.js
+#   version: 1.4.4
+#   license:
+#     name: MIT
+#     url: https://github.com/angular/angular.js/blob/master/LICENSE
+#     gpl-compatible: true
+#   js:
+#     https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js: { type: external, minified: true }

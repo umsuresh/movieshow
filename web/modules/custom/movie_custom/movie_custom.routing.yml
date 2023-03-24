@@ -6,3 +6,19 @@ movie_custom.hello:
   requirements:
     _access: 'TRUE'
 
+movie_custom.form:
+  path: '/codimth_batch'
+  defaults:
+    _form: '\Drupal\movie_custom\Form\BatchForm'
+    _title: 'Demo of batch processing'
+  requirements:
+    _permission: 'access content'
+
+movie_custom.add_student:
+  path: '/students/add'
+  defaults:
+    _title: 'Add Students'
+    _form: '\Drupal\movie_custom\Form\StudentForm'
+  requirements:
+    _access: 'TRUE'
+

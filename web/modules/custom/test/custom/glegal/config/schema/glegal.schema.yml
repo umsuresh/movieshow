@@ -1,0 +1,15 @@
+# Schema for the configuration files of the glegal module.
+
+glegal.settings:
+  type: config_object
+  label: 'glegal settings'
+  mapping:
+    group_terms_style:
+      type: integer
+      label: 'Groups T&C display style'
+    accept_every_group_request:
+      type: boolean
+      label: 'Ask to accept T&Cs on every login'
+    except_roles:
+      type: sequence
+      label: 'Exempt user roles'

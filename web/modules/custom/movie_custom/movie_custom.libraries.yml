@@ -1,0 +1,9 @@
+movie_custom:
+  js:
+    js/custom.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+  css:
+    theme:
+      css/weather_block.css: {}

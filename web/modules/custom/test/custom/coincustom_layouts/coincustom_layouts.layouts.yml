@@ -1,0 +1,20 @@
+custom_layouts_grid:
+ label: 'Dashboard Custom Layout'
+ path: templates/layouts
+ category: 'Custom Layouts'
+ template: custom-layouts--grid
+ library: coincustom_layouts/custom_layouts_grid
+ default_region: content
+ icon_map:
+   - [content_first, content_second, content_second]
+   - [content_first, content_third, content_fourth]
+
+ regions:
+    content_first:
+      label: Content First
+    content_second:
+      label: Content Second
+    content_third:
+      label: Content Third
+    content_fourth:
+      label: Content Fourth

@@ -1,0 +1,597 @@
+<?php
+
+/**
+ * @file
+ * Module file for gLegal.
+ */
+
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+use Drupal\Component\Serialization\Json;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\glegal\Entity\gAccepted;
+use Drupal\group\Entity\GroupContentInterface;
+
+/**
+ * Implements hook_help().
+ */
+function glegal_help($route_name, RouteMatchInterface $route_match) {
+  $output = '';
+  switch ($route_name) {
+    case 'help.page.glegal':
+      $output .= t('Display a Terms & Conditions statement on the Group page, require visitor to accept T&C to Join. When a user creates an account they are required to accept your Terms & Conditions to complete their Group Request.');
+      break;
+
+    case 'glegal.config_glegal':
+      $output .= t('Display a Terms & Conditions statement on the Group page, require visitor to accept the T&C to Join. A <a href="@page">page</a> displaying your T&C will be automatically created, access to this page can be set via the <a href="@access">permissions</a> administration page.',
+        [
+          '@page'   => \Drupal::urlGenerator()->generate('glegal.glegal'),
+          '@access' => \Drupal::urlGenerator()
+            ->generate('user.admin_permissions'),
+        ]);
+  }
+
+  return $output;
+}
+
+/**
+ * Form elements for displaying T&Cs to users.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param array $conditions
+ *   Terms & Conditions to be displayed.
+ * @param string $action
+ *   What user action the form is being used for.
+ */
+function glegal_display_fields(array &$form, array $conditions) {
+  $settings = \Drupal::config('glegal.settings');
+
+  $form['current_id']     = [
+    '#type'  => 'value',
+    '#value' => $conditions['version'],
+  ];
+  $form['language_value'] = [
+    '#type'  => 'value',
+    '#value' => $conditions['language'],
+  ];
+  $form['revision_id']    = [
+    '#type'  => 'value',
+    '#value' => $conditions['revision'],
+  ];
+  $form['current_date']   = [
+    '#type'  => 'value',
+    '#value' => $conditions['date'],
+  ];
+
+  $form['glegal'] = [
+    '#type'   => 'markup',
+    '#title'  => t('Terms and Conditions'),
+    '#weight' => 29,
+    '#open'   => TRUE,
+  ];
+
+  $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+  $form['#attached']['library'][] = 'core/drupal.ajax';
+  $form['#attached']['library'][] = 'core/jquery.form';
+  $form['glegal']['conditions'] = [
+    '#markup' => '',
+  ];
+  $accept_label = glegal_accept_label(TRUE, TRUE);
+
+  $form['glegal']['glegal_accept'] = [
+    '#type'          => 'checkbox',
+    '#title'         => $accept_label,
+    '#default_value' => 0,
+    '#weight'        => 50,
+    '#required'      => TRUE,
+  ];
+
+}
+
+/**
+ * The accept terms and conditions label.
+ *
+ * @param bool $link
+ *   Should the label contain a link.
+ * @param bool $modal
+ *   Should target be shown in a modal dialog.
+ *
+ * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+ *   Label with markup.
+ */
+function glegal_accept_label($link = FALSE, $modal = FALSE) {
+
+  if ($link) {
+    $url = \Drupal::urlGenerator()->generate('glegal.glegal');
+
+    if ($modal) {
+      $result = glegal_get_conditions();
+      $glegal_updated_date = date('d-m-Y H:i', $result['date']);
+      return t('@terms', [
+        '@terms' => Link::fromTextAndUrl(
+        t('Terms & Conditions'),
+        Url::fromRoute('glegal.glegal', [], [
+          'attributes' => [
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => Json::encode([
+              'width' => 'auto',
+              'title' => 'Terms and Conditions ( Last Updated on ' . $glegal_updated_date . ' )',
+            ]),
+            'class' => [
+              'use-ajax',
+            ],
+            'rel' => 'nofollow',
+          ],
+        ])
+        )->toString(),
+      ]);
+    }
+    else {
+      return t('<a href=":terms"  target="_blank">Terms & Conditions</a>', [':terms' => $url]);
+    }
+
+  }
+  else {
+    return t('Terms & Conditions');
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ * To display Groups Terms and conditions checkbox to this page
+ */
+function glegal_form_alter(&$form, &$form_state, $form_id) {
+  $settings = \Drupal::config('glegal.settings');
+  $group_request = FALSE;
+  if (preg_match("/group-request-membership_form/i", $form_id)) {
+    $group_request = TRUE;
+    $form_id = "group-request-membership_form";
+  }
+  if ($form_id == "group_content_public-group_membership_group-join_form" || $form_id == "group_content_private_invite_-group_membership_group-join_form" || $group_request) {
+
+    if ($form_id == "group-request-membership_form") {
+      $group_type[] = "group_invite";
+    }
+    elseif ($form_id == "group_content_public-group_membership_group-join_form") {
+      $group_type[] = "group_join";
+    }
+    elseif ($form_id == "group_content_private_invite_-group_membership_group-join_form") {
+      $group_type[] = "group_member_req";
+    }
+    else {
+      $group_type = [];
+    }
+
+    $account = \Drupal::currentUser();
+    $exempt = glegal_user_is_exempt($account);
+    $group_permission = glegal_group_type_permission($group_type);
+
+    if (!$group_permission) {
+      return;
+    }
+
+    if ($exempt) {
+      return;
+    }
+    /* Terms and Conditions checkbox customization */
+    $language   = \Drupal::languageManager()->getCurrentLanguage();
+    $conditions = glegal_get_conditions($language->getId());
+    // Do nothing if there's no Terms and Conditions text set.
+    if (empty($conditions['conditions'])) {
+      return;
+    }
+
+    glegal_display_fields($form, $conditions);
+
+    $result = glegal_get_conditions();
+    $legal_updated_date = date('d-m-Y H:i', $result['date']);
+    /* Checkbox field title change */
+    $chk_title = t('@terms', [
+      '@terms' => Link::fromTextAndUrl(
+        t('Terms & Conditions'),
+        Url::fromRoute('glegal.glegal', [], [
+          'attributes' => [
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => Json::encode([
+              'width' => 'auto',
+              'title' => 'Terms and Conditions ( Last Updated on ' . $legal_updated_date . ' )',
+            ]),
+            'class' => [
+              'use-ajax',
+            ],
+            'rel' => 'nofollow',
+          ],
+        ])
+      )->toString(),
+    ]);
+    $form['glegal']['glegal_accept']['#title'] = $chk_title;
+  }
+
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function glegal_entity_info() {
+
+  $info = [];
+
+  $info['glegal_conditions'] = [
+    'label'       => t('glegal Terms & Conditions'),
+    'base table'  => 'glegal_conditions',
+    'entity keys' => [
+      'id'    => 'tc_id',
+      'label' => 'name',
+    ],
+    'module'      => 'glegal',
+  ];
+
+  return $info;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function glegal_group_content_insert(GroupContentInterface $group_content) {
+  $type = $group_content->getContentPlugin()->getPluginId();
+  // Echo $type;
+  // echo "Group Request Id";
+  // die;.
+  /* Group Request - group_membership_request , Group Invitation - group_invitation */
+  if ($type == 'group_membership' || $type == "group_membership_request") {
+    $group_id = $group_content->getGroup()->id();
+    // Get last accepted version for this account.
+    $user = \Drupal::currentUser();
+    $uid = $user->id();
+    $glegal_account = glegal_get_accept($uid, $group_id);
+    // If no version accepted, get version with current language revision.
+    $language = \Drupal::languageManager()->getCurrentLanguage();
+    $conditions = glegal_get_conditions($language->getId());
+    if (empty($conditions['conditions'])) {
+      return;
+    }
+
+    if (empty($glegal_account['version'])) {
+      glegal_save_accept($conditions['version'], $conditions['revision'], $conditions['language'], $uid, $group_id);
+    }
+    else {
+      // Get version / revision of last accepted language.
+      $conditions = glegal_get_conditions($glegal_account['language']);
+      // No conditions set yet, skip T&Cs.
+      if (empty($conditions['conditions'])) {
+        return;
+      }
+      // Check latest version of T&C has been accepted.
+      $accepted = glegal_version_check($uid, $group_id, $conditions['version'], $conditions['revision'], $glegal_account);
+      if ($accepted === TRUE) {
+        glegal_update_accept($glegal_account['glegal_id'], $conditions['language']);
+        return;
+      }
+      else {
+        glegal_save_accept($conditions['version'], $conditions['revision'], $conditions['language'], $uid, $group_id);
+      }
+    }
+  }
+}
+
+/**
+ *
+ */
+function glegal_update_accept($tc_id, $language) {
+  $legal = gAccepted::load($tc_id);
+  $legal->set('language', $language);
+  $legal->set('accepted', time());
+  $legal->save();
+}
+
+/**
+ *
+ */
+function glegal_form_submit(EntityInterface $entity) {
+  /* if($form_id == "group_content_public-group_membership_group-join_form") {
+  $language = \Drupal::languageManager()->getCurrentLanguage();
+
+  if ($entity instanceof User) {
+  $conditions = glegal_get_conditions($language->getId());
+  if (empty($conditions['conditions'])) {
+  return;
+  }
+
+  // Record the accepted state before removing glegal_accept from $edit.
+  $accepted = \Drupal::request()->request->get('glegal_accept') ? TRUE : FALSE;
+  // Don't insert if user is already registered (administrator).
+  if (\Drupal::currentUser()->id() != 0) {
+  return;
+  }
+
+  if ($accepted) {
+  echo "Cominyghg";
+  die;
+  glegal_save_accept($conditions['version'], $conditions['revision'], $conditions['language'], $entity->get('uid')->getString());
+  }
+  }
+  } */
+  echo "Coming here";
+  die;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+/*function glegal_user_update(EntityInterface $entity) {
+
+if ($entity instanceof User) {
+$language = \Drupal::languageManager()->getCurrentLanguage();
+
+$conditions = glegal_get_conditions($language->getId());
+
+if (empty($conditions['conditions'])) {
+return;
+}
+
+// Record the accepted state before removing glegal_accept from $edit.
+$accepted = \Drupal::request()->request->get('glegal_accept') ? TRUE : FALSE;
+
+if (\Drupal::currentUser()->id() != $entity->get('uid')->getString()) {
+return;
+}
+
+// If already accepted skip data entry.
+$previously_accepted = glegal_version_check($entity->get('uid')
+->getString(), $conditions['version'], $conditions['revision']);
+
+if ($previously_accepted === TRUE) {
+return;
+}
+
+if ($accepted) {
+glegal_save_accept($conditions['version'], $conditions['revision'], $conditions['language'], $entity->get('uid')
+->getString());
+}
+}
+}
+ */
+
+/**
+ * Get last version of T&C accepted by a user.
+ *
+ * @param int $uid
+ *   User ID.
+ *
+ * @return array
+ *   Acceptance information.
+ */
+function glegal_get_accept($uid, $gid) {
+  $keys = [
+    'glegal_id',
+    'version',
+    'revision',
+    'language',
+    'uid',
+    'group_id',
+    'accepted',
+  ];
+  $result = \Drupal::database()->select('glegal_accepted', 'la')
+    ->fields('la')
+    ->condition('uid', $uid)
+    ->condition('group_id', $gid)
+    ->orderBy('version', 'DESC')
+    ->orderBy('revision', 'DESC')
+    ->execute()
+    ->fetchAllAssoc('glegal_id');
+  $result = count($result) ? array_shift($result) : [];
+  $accept = [];
+  foreach ($keys as $key) {
+    if (isset($result->$key)) {
+      $accept[$key] = $result->$key;
+    }
+  }
+
+  return $accept;
+}
+
+/**
+ * Save instance of a user accepting T&C.
+ *
+ * @param int $version
+ *   Version ID of T&C.
+ * @param int $revision
+ *   Revision ID of T&C.
+ * @param string $language
+ *   Language code of T&C.
+ * @param int $uid
+ *   User ID of user.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function glegal_save_accept($version, $revision, $language, $uid, $gid) {
+  gAccepted::create([
+    'version'  => $version,
+    'revision' => $revision,
+    'language' => $language,
+    'uid'      => $uid,
+    'group_id' => $gid,
+    'accepted' => time(),
+  ])->save();
+
+}
+
+/**
+ * Get latest T&C.
+ *
+ * @param string $language
+ *   Language code.
+ *
+ * @return array
+ *   T&C conditions content and metadata.
+ */
+function glegal_get_conditions($language = '') {
+  $keys = [
+    'tc_id',
+    'version',
+    'revision',
+    'language',
+    'conditions',
+    'format',
+    'date',
+    'changes',
+  ];
+
+  if (!empty($language)) {
+    $result = \Drupal::database()->select('glegal_conditions', 'lc')
+      ->fields('lc')
+      ->condition('language', $language)
+      ->orderBy('version', 'DESC')
+      ->orderBy('revision', 'DESC')
+      ->range(0, 1)
+      ->execute()
+      ->fetchAllAssoc('tc_id');
+    $result = (array) array_shift($result);
+  }
+  else {
+    $result = \Drupal::database()->select('glegal_conditions', 'lc')
+      ->fields('lc')
+      ->orderBy('tc_id', 'DESC')
+      ->execute()
+      ->fetchAllAssoc('tc_id');
+    $result = (array) array_shift($result);
+  }
+
+  foreach ($keys as $key) {
+    $conditions[$key] = $result[$key] ?? '';
+  }
+
+  return $conditions;
+}
+
+/**
+ * Check if user has accepted latest version of T&C.
+ */
+function glegal_version_check($uid, $gid, $version, $revision, $glegal_account = []) {
+  $accepted = FALSE;
+
+  if (empty($glegal_account)) {
+    $glegal_account = glegal_get_accept($uid, $gid);
+  }
+  if (array_key_exists('version', $glegal_account) && array_key_exists('revision', $glegal_account)) {
+    if ($glegal_account['version'] == $version && $glegal_account['revision'] == $revision) {
+      $accepted = TRUE;
+    }
+  }
+
+  return $accepted;
+}
+
+/**
+ * Determine version ID of next T&C.
+ *
+ * @param string $version_handling
+ *   Specify if a new 'version' or 'revision' ID should be returned.
+ * @param string $language
+ *   Language of T&C.
+ *
+ * @return array
+ *   Array with next 'version' and 'revision'.
+ */
+function glegal_version($version_handling, $language) {
+  $versioning = NULL;
+
+  $version = (int) \Drupal::database()->select('glegal_conditions', 'lc')
+    ->fields('lc', ['version'])
+    ->orderBy('version', 'desc')
+    ->range(0, 1)
+    ->execute()
+    ->fetchField();
+
+  // Make new version.
+  if ($version_handling == 'version') {
+    $versioning['version'] = empty($version) ? 1 : $version + 1;
+    $versioning['revision'] = 1;
+  }
+
+  // Make new revision.
+  if ($version_handling == 'revision') {
+
+    $revision = \Drupal::database()->select('glegal_conditions', 'lc')
+      ->fields('lc', ['revision'])
+      ->condition('version', $version)
+      ->condition('language', $language)
+      ->orderBy('revision', 'DESC')
+      ->execute()
+      ->fetchField();
+
+    $versioning['version'] = empty($version) ? 1 : $version;
+    $versioning['revision'] = empty($revision) ? 1 : $revision + 1;
+  }
+
+  return $versioning;
+}
+
+/**
+ * Check if user is exempt from Terms & Conditions.
+ *
+ * @param object $account
+ *   User account object.
+ *
+ * @return bool
+ *   TRUE if user is exempt, FALSE otherwise.
+ */
+function glegal_user_is_exempt($account) {
+
+  // User 1 is exempt from accepting T&Cs, no need to display T&Cs.
+  if ($account->id() == 1) {
+    return TRUE;
+  }
+
+  $settings = \Drupal::config('glegal.settings');
+
+  $exempt_roles = $settings->get('except_roles');
+  $account_roles = $account->getRoles();
+  if (count(array_intersect($exempt_roles, $account_roles))) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Check the group permission details .
+ */
+function glegal_group_type_permission($gtype = []) {
+
+  if (!empty($gtype)) {
+    $settings = \Drupal::config('glegal.settings');
+    $group_type = $settings->get('group_type');
+    if (count(array_intersect($group_type, $gtype))) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+  return FALSE;
+}
+
+/**
+ * Deny access and clean up cookies.
+ */
+function glegal_deny_with_redirect() {
+  user_cookie_delete('glegal_hash');
+  user_cookie_delete('glegal_id');
+  \Drupal::messenger()->addMessage(t('Operation timed out. Please try to log in again.'));
+  $response = new RedirectResponse('/');
+  $response->sendHeaders();
+  exit();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function glegal_theme() {
+  $themes = [
+    'glegal_current_metadata' => ['render element' => 'form'],
+  ];
+
+  return $themes;
+}

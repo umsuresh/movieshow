@@ -1,0 +1,20 @@
+glegal.people_legal:
+  title: 'GLegal'
+  route_name: glegal.config_legal
+  base_route: glegal.people_legal
+glegal.people_legal_settings:
+  title: 'Configure'
+  route_name: glegal.config_settings
+  base_route: glegal.people_legal
+glegal.people_legal_languages:
+  title: 'Languages'
+  route_name: glegal.config_language
+  base_route: glegal.people_legal
+glegal.history:
+  title: 'T&C History'
+  route_name: view.glegal_terms.page_1
+  base_route: glegal.people_legal
+glegal.accepted:
+  title: 'Accepted'
+  route_name: view.glegal_users.page_1
+  base_route: glegal.people_legal

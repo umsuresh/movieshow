@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\user\Entity\User;
+use Drupal\employee_directory\Controller\EmployeeDirectoryController;
+
+/**
+ * Employee Listing .
+ */
+function employee_directory_theme($existing, $type, $theme, $path) {
+  return [
+    'employee_lists' => [
+      'variables' => [
+        'data' => [],
+        'title' => '',
+      ],
+    ],
+    'employee_details' => [
+      'variables' => [
+        'data' => [],
+        'title' => '',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements Alters user_profile_form.
+ */
+function employee_directory_user_login() {
+  $roles = \Drupal::currentUser()->getRoles();
+  if (!in_array("administrator", $roles)) {
+    // Current user unique idendifier.
+    $uid = \Drupal::currentUser()->id();
+    $user = User::load($uid);
+    $employee_id = $user->get('field_employee_id')->value;
+    if (!empty($employee_id)) {
+      $getApi = new EmployeeDirectoryController();
+      $mobile_no = '';
+      $adid = '';
+      /* Call the Employee Profile SAP api. */
+      $result = $getApi->getApiDataEmpDir($employee_id, $mobile_no, $adid);
+      /* Update the employee profile fields */
+      if (!empty($result)) {
+        $getApi->updateEmployeeDirectoryData($result, $uid);
+        /* Add the Employee Profile SAP api details to log. */
+        $getApi->addedSapApiResponse($result, $uid);
+      }
+      /* Update the reporting line and direct report field info */
+      $getResult = $getApi->getApiDataEmpStr($employee_id);
+      if (!empty($getResult)) {
+        $getApi->updateEmployeeStructureData($getResult->d->results, $uid);
+        /* Add the employee reporters details to log table. */
+        $getApi->addedSapApiEmpStrResponse($getResult, $uid, $getResult->d->results[0]->__metadata->uri);
+      }
+      /* Update the user profile field */
+      $get_image_result = $getApi->getApiEmpProfile($employee_id);
+      if (isset($get_image_result) && isset($get_image_result['response'])) {
+        /* Update the user profile from the Image API response. */
+        if ($get_image_result['response']->getStatusCode() == 200) {
+          $getprofile_update = $getApi->getProfileImage($get_image_result, $employee_id);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Employee Directory Data Bulk cron hooks.
+ */
+function employee_directory_cron() {
+  /*Bulk Update Employees Directory  */
+  $getApi = new EmployeeDirectoryController();
+  $date = date('Y-m-d H:i:s', time());
+  $time = date('H:i:s', time());
+  $data = $getApi->getApiBulkDataEmpDir($date, $time);
+  if (isset($data->d->results)) {
+    foreach ($data->d->results as $result) {
+      $getApi->updateBulkEmployeeDirectoryData($result);
+    }
+  }
+  /*Bulk Update Employees Structure  */
+  $getResult = $getApi->getApiBulkDataEmpStr($date, $time);
+  foreach ($getResult->d->results as $results) {
+    $getEmpStrData = $getApi->updateBulkEmployeeStructureData($results);
+  }
+}

@@ -1,0 +1,36 @@
+glegal.config_legal:
+  path: '/admin/config/people/glegal'
+  defaults:
+    _form: '\Drupal\glegal\Form\glegalAdminTermsForm'
+    _title: 'glegal'
+  requirements:
+    _permission: 'administer group Terms and Conditions'
+glegal.config_terms:
+  path: '/admin/config/people/glegal/terms'
+  defaults:
+    _form: '\Drupal\glegal\Form\glegalAdminTermsForm'
+    _title: 'Add T&C'
+  requirements:
+    _permission: 'administer group Terms and Conditions'
+glegal.config_settings:
+  path: '/admin/config/people/glegal/settings'
+  defaults:
+    _form: '\Drupal\glegal\Form\glegalAdminSettingsForm'
+    _title: 'Configure T&C'
+  requirements:
+    _permission: 'administer group Terms and Conditions'
+glegal.config_language:
+  path: '/admin/config/people/glegal/languages'
+  defaults:
+    _form: '\Drupal\glegal\Form\glegalLanguageSettings'
+    _title: 'Languages'
+  requirements:
+    _custom_access:  '\Drupal\glegal\Form\glegalLanguageSettings::access'
+    _permission: 'administer group Terms and Conditions'
+glegal.glegal:
+  path: '/glegal'
+  defaults:
+    _controller: '\Drupal\glegal\Controller\glegalController::glegalPageAction'
+    _title: 'Terms and Conditions'
+  requirements:
+    _permission: 'view group Terms and Conditions'

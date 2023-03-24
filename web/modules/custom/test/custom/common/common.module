@@ -1,0 +1,425 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\group\Entity\Group;
+use Drupal\views\ViewExecutable;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Datetime\Element\Datetime;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\scheduler\Plugin\Field\FieldWidget\TimestampDatetimeNoDefaultWidget;
+
+/**
+ * Implements Create Content Page - Checkbox css library include method.
+ */
+function common_preprocess_page(&$variables) {
+  $variables['#attached']['library'][] = 'common/mylib';
+}
+
+/**
+ * Implements hook_mail_alter().
+ */
+function common_mail_alter(&$message) {
+  \Drupal::logger("email")->info('Send email module' . $message['id']);
+  if (strpos($message['id'], 'content_moderation_notifications') === 0) {
+    \Drupal::logger("email")->info('Send email notification');
+    $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
+  }
+
+  if ($message['id'] == 'contact_page_mail') {
+    $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed';
+    $contact_message = $message['params']['contact_message'];
+    // Get subject.
+    $message['subject'] = $contact_message->getSubject();
+    // Get message.
+    $message['body'] = [];
+    $message['body'][] = t($contact_message->getMessage());
+  }
+}
+
+/**
+ *
+ */
+function common_menu_local_tasks_alter(&$data, $route_name) {
+  $user_roles = \Drupal::currentUser()->getRoles();
+  if ($route_name == 'user.login'  && isset($data['tabs'][0])) {
+    // Remove all tabs from user login form.
+    foreach ($data['tabs'][0] as $key => $tab) {
+      $data['tabs'][0][$key]['#access'] = FALSE;
+    }
+  }
+
+  if ($route_name == "entity.user.canonical") {
+    foreach ($data['tabs'][0] as $key => $tab) {
+      if ($key == "entity.user.edit_form" && (count($user_roles) == 1 && in_array('authenticated', $user_roles))) {
+        $data['tabs'][0][$key]['#access'] = FALSE;
+      }
+    }
+  }
+
+  if (in_array("content_editor", $user_roles) && !empty(\Drupal::routeMatch()->getParameter('group')) && isset($data['tabs'][0])) {
+    $g = \Drupal::routeMatch()->getParameter('group');
+    $group = Group::load($g->id());
+    $group_type = $group->bundle();
+    // Echo $group_type;.
+    foreach ($data['tabs'][0] as $key => $tab) {
+      // Echo $key;
+      // echo "\n";.
+      if ($key == "group.delete_form" || $key == "group.content") {
+        $data['tabs'][0][$key]['#access'] = FALSE;
+        unset($data['tabs'][0][$key]);
+      }
+      if (($group_type == "private_request_to_joi" || $group_type == "public") && $key == "views_view:view.group_invitations.page_1") {
+        $data['tabs'][0][$key]['#access'] = FALSE;
+        unset($data['tabs'][0][$key]);
+      }
+    }
+  }
+}
+
+/**
+ *
+ */
+function common_form_alter(&$form, &$form_state, $form_id) {
+  $user = \Drupal::currentUser();
+  if ($form_id == 'user_login_form' && (empty($user->id()) || $user->id() == 0)) {
+    $form['name']['#attributes']['placeholder'] = t('User Name');
+    $form['pass']['#attributes']['placeholder'] = t('Password');
+    $form['#submit'][] = 'common_user_login_form_submit';
+  }
+
+  if ($form_id == "user_form") {
+    $user_roles = \Drupal::currentUser()->getRoles();
+    if (count($user_roles) == 1 && in_array('authenticated', $user_roles)) {
+      $form['#access'] = FALSE;
+    }
+  }
+
+  // To Validate the Topic.
+  if ($form_id == "group_content_group_content_type_bd3645290ba55_add_form" || $form_id == "group_content_group_content_type_90dee2b34007a_add_form" || $form_id == "group_content_group_content_type_0403d33a1debb_add_form") {
+    $form['#validate'][] = 'validate_topic';
+  }
+
+  if ($form_id == "group_content_public-group_membership_group-join_form"
+  || $form_id == "group_content_group_content_type_a292264bae833_group-request-membership_form"
+  || $form_id == "group_content_private_invite_-group_membership_group-join_form"
+  || $form_id == "group_content_private_invite_-group_membership_group-leave_form"
+  || $form_id == "group_content_group_content_type_d29ab791f471d_group-leave_form"
+  || $form_id == "group_content_public-group_membership_group-leave_form") {
+    $form['actions']['submit']['#submit'][] = 'group_request_redirection';
+  }
+
+  if ($form_id == "group_content_group_content_type_a292264bae833_group-approve-membership_form") {
+    $form['actions']['submit']['#submit'][] = 'group_approve_redirection';
+  }
+
+  // To add Guideline link to the contact form
+  if($form_id == "contact_message_feedback_form") {
+    $url = Url::fromUri('internal:/share-one-on-one-guidelines');
+    $form['contact_guideline'] = [
+      '#type' => 'link',
+      '#url' => $url,
+      '#title' => t('Guideline'),
+      '#weight' => -47,
+      '#attributes' => [
+        'class' => 'contact-guideline',
+        'target' => '_blank',
+      ],
+    ];
+  }
+
+  if($form_id == "contact_message_hr_speaks_form") {
+    $url = Url::fromUri('internal:/share-one-on-one-guidelines');
+    $form['contact_guideline'] = [
+      '#type' => 'link',
+      '#url' => $url,
+      '#title' => t('Guideline'),
+      '#weight' => -47,
+      '#attributes' => [
+        'class' => 'contact-guideline',
+        'target' => '_blank',
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function common_views_pre_render(ViewExecutable $view) {
+  // Echo $view->id();
+  if (($view->id() === 'sme_group') && ($view->current_display === 'block_2')) {
+    // Echo "count =>".count($view->result);.
+    $user = \Drupal::currentUser();
+    $user_id = \Drupal::currentUser()->id();
+    foreach ($view->result as $key => $value) {
+      // Echo $key;
+      // print_r($value);
+      $userids = [];
+      $group_id = $value->_entity->get('id')->value;
+      $group = Group::load($group_id);
+      $members = $group->getMembers();
+      if (!empty($members)) {
+        foreach ($members as $member) {
+          $user = $member->getUser();
+          $userids[] = $user->id();
+        }
+        if (in_array($user_id, $userids)) {
+          unset($view->result[$key]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Redirect to the specific page.
+ */
+function common_user_login_form_submit($form, FormStateInterface $form_state) {
+  $alias = \Drupal::service('path_alias.manager')->getPathByAlias('/welcome');
+  if (preg_match('/node\/(\d+)/', $alias, $matches)) {
+    if (isset($matches[1]) && !empty($matches[1])) {
+      $form_state->setRedirect('entity.node.canonical', ['node' => $matches[1]]);
+    }
+  }
+}
+
+/**
+ *
+ */
+function common_views_query_alter($view, $query) {
+  if ($view->id() == 'discussion_topic' && $view->current_display == "block_3") {
+    // To print query with placeholder.
+    // print dpm($view->query->query()->__toString());
+    // To print query with dynamic argument values
+    // print dpq($view->query->query());
+    // Get Current User associated group ids.
+    $user = \Drupal::currentUser();
+    $groups = [];
+    $grp_membership_service = \Drupal::service('group.membership_loader');
+    $grps = $grp_membership_service->loadByUser($user);
+    foreach ($grps as $grp) {
+      $groups[] = $grp->getGroup();
+    }
+    $gids = [];
+    foreach ($groups as $key => $group) {
+      $gids[] = $groups[$key]->id();
+    }
+    // Traverse through the 'where' part of the query.
+    foreach ($query->where as &$condition_group) {
+      foreach ($condition_group['conditions'] as &$condition) {
+        if (!empty($gids) && count($gids) > 1 && str_contains($condition['field'], 'gid')) {
+          $field_value = [
+            ':group_content_field_data_gid[]' => $gids,
+          ];
+          $condition = [
+            'field' => 'group_content_field_data_node_field_data.gid IN(:group_content_field_data_gid[])',
+            'value' => $field_value,
+            'operator' => 'formula',
+          ];
+        }
+
+        if (!empty($gids) && count($gids) == 1 && str_contains($condition['field'], 'gid')) {
+          $field_value = [
+            ':group_content_field_data_gid' => $gids[0],
+          ];
+          $condition = [
+            'field' => 'group_content_field_data_node_field_data.gid = :group_content_field_data_gid',
+            'value' => $field_value,
+            'operator' => 'formula',
+          ];
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function common_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  $roles = \Drupal::currentUser()->getRoles();
+  /* Hide operations of delete group. */
+  if (in_array("content_editor", $roles) && $entity->getEntityTypeId() == "group") {
+    if (isset($operations['delete'])) {
+      unset($operations['delete']);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function common_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Echo $form['#id'];
+  // || $form['#id'] == "views-exposed-form-news-media-page-1".
+  if (isset($form['#id']) && ($form['#id'] == 'views-exposed-form-hall-of-fame-page-1' || $form['#id'] == 'views-exposed-form-news-media-page-2')) {
+    $options = [
+      'all' => t('- Select Month -'),
+      '01' => 'January',
+      '02' => 'February',
+      '03' => 'March',
+      '04' => 'April',
+      '05' => 'May',
+      '06' => 'June',
+      '07' => 'July',
+      '08' => 'August',
+      '09' => 'September',
+      '10' => 'October',
+      '11' => 'November',
+      '12' => 'December',
+    ];
+
+    $form['month'] = [
+      // '#title' => t('Month'),
+      '#type' => 'select',
+      '#options' => $options,
+      '#size' => NULL,
+      '#default_value' => 'all',
+    ];
+  }
+}
+
+/**
+ *
+ */
+function validate_topic($form, FormStateInterface $form_state) {
+  $nid = $form_state->getValue('entity_id')[0]['target_id'];
+  $group_content = \Drupal::entityTypeManager()
+    ->getStorage('group_content')
+    ->loadByProperties([
+      'entity_id' => $nid,
+    ]);
+  // Assuming that the content can be related only to 1 group.
+  $groups = [];
+  $group_content = reset($group_content);
+  if (!empty($group_content)) {
+    $groups = $group_content->getGroup();
+  }
+
+  if (empty($groups)) {
+    return TRUE;
+  }
+  else {
+    \Drupal::messenger()->addError(t('Topic already added in - ' . $groups->label()));
+    $form_state->setRebuild();
+  }
+}
+
+/**
+ *  * Implements hook_preprocess_HOOK().
+ *  *
+ *  * @param $variables
+ */
+function common_preprocess_status_messages(&$variables) {
+  if (isset($variables['message_list']['status'])) {
+    $status_messages = $variables['message_list']['status'];
+    foreach ($status_messages as $delta => $message) {
+      if (strpos((string) $message, 'Your comment has been queued for review by site administrators and will be published after approval.') !== FALSE) {
+        $variables['message_list']['status'][$delta] = "Thank you! Your Comments has been submitted for approval";
+      }
+    }
+  }
+}
+
+/**
+ *
+ */
+function common_preprocess_comment(&$variables) {
+  $comment = $variables['elements']['#comment'];
+  $variables['submitted'] = t('@username on @datetime', ['@username' => $variables['author'], '@datetime' => $variables['created']]);
+  $variables['title'] = "";
+  $variables['permalink'] = "";
+}
+
+/**
+ *
+ */
+function group_request_redirection($form, FormStateInterface $form_state) {
+  $url = url::fromUserInput('/sme_groups');
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ *
+ */
+function group_approve_redirection($form, FormStateInterface $form_state) {
+  $group = \Drupal::routeMatch()->getParameter('group');
+  $gid = $group->id();
+  $url = url::fromUserInput('/group/' . $gid . '/members-pending');
+  $form_state->setRedirectUrl($url);
+
+}
+
+ /**
+  * Implements hook_field_widget_form_alter().
+  */
+ function common_field_widget_datetime_timestamp_no_default_form_alter(&$element, FormStateInterface $form_state, $context) {
+  // kint($context);
+  // Only alter the callback for the "Publish On" instance of the `datetime_timestamp_no_default` widget.
+   if (isset($element['#title'])) {
+    //  echo $element['#title']->__toString();
+     if ($element['#title']->__toString() == "Unpublish on") {
+       $element['value']['#value_callback'] = 'common_un_publish_on_default_value_callback';
+     }
+   }
+ }
+ 
+ /**
+  * Callback function to add default time to the publish on widget.
+  */
+ function common_un_publish_on_default_value_callback(&$element, $input, $form_state) {
+   // If no default value, set the default to the current date/time.
+   if (empty($element['#default_value'])) {
+    $node = \Drupal::routeMatch()->getParameter('node');
+    $date_format = $element['#date_date_format'];
+    $time_format = $element['#date_time_format'];
+    $time_format = "H:i";
+    $timezone = !empty($element['#date_timezone']) ? $element['#date_timezone'] : NULL;
+    $date_time_format = trim($date_format . ' ' . $time_format);
+    $request_path = Drupal::service('path.current')->getPath();
+    if ($request_path == '/node/add/news_media') { 
+      $date_time_input = date('Y-m-d H:i', strtotime("+90 days"));
+     }
+     else if(isset($node) && !empty($node) && $node->getType() == "news_media")
+     {
+      $addondate = date('Y-m-d H:i', $node->created->getValue()[0]['value']);
+      $date_time_input = date('Y-m-d H:i', strtotime($addondate . " +90 days"));
+     }
+     if(!empty($date_time_input))
+     {
+      $date = DrupalDateTime::createFromFormat($date_time_format, $date_time_input, $timezone);
+  
+      $element['#default_value'] = $date;
+      $input = FALSE;
+      return Datetime::valueCallback($element, $input, $form_state);
+     }
+     else
+     {
+      return TimestampDatetimeNoDefaultWidget::valueCallback($element, $input, $form_state);
+     }     
+   }
+   // Fallback to the original valueCallback() method.
+   else {
+     return TimestampDatetimeNoDefaultWidget::valueCallback($element, $input, $form_state);
+   }
+ }
+
+ /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function common_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  // Attach the publish/un-publish state form elements to the scheduler
+  // settings group.
+  // echo "calling";
+  // kint($form['unpublish_state']['widget'][0]['#options']);
+  $request_path = Drupal::service('path.current')->getPath();
+  $type = $form_state->getFormObject()->getEntity()->toArray();
+  if ($request_path == '/node/add/news_media' || $type['type'][0]['target_id'] == "news_media") { 
+    $form['unpublish_state']['widget'][0]['#default_value'] = "archived";
+  }
+}
