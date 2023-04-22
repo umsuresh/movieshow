@@ -795,7 +795,7 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 #   include $app_root . '/' . $site_path . '/settings.local.php';
 # }
 $databases['default']['default'] = array (
-  'database' => 'movieshow',
+  'database' => 'movie',
   'username' => 'root',
   'password' => '',
   'prefix' => '',
@@ -807,3 +807,5 @@ $databases['default']['default'] = array (
 );
 $config['system.logging']['error_level'] = 'verbose';
 $settings['config_sync_directory'] = '../config/sync';
+// $settings['cache']['bins']['render'] = 'cache.backend.null';
+$settings['disable_captcha'] = TRUE;

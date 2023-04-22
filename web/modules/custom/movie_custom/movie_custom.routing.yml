@@ -6,3 +6,29 @@ movie_custom.hello:
   requirements:
     _access: 'TRUE'
 
+movie_custom.form:
+  path: '/codimth_batch'
+  defaults:
+    _form: '\Drupal\movie_custom\Form\BatchForm'
+    _title: 'Demo of batch processing'
+  requirements:
+    _permission: 'access content'
+
+movie_custom.model_form:
+  path: '/model/model_form'
+  defaults:
+    _form: 'Drupal\movie_custom\Form\ModelForm'
+    _title: 'Model Form'
+  requirements:
+    _permission: 'access content'
+
+movie_custom.open_modal_form:
+  path: '/model/mymodel'
+  defaults:
+    _title: 'Open Modal Form'
+    _controller: '\Drupal\movie_custom\Controller\ModalFormExampleController::openModalForm'
+  requirements:
+    _permission:  'access content'
+  options:
+    _admin_route: TRUE
+

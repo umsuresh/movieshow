@@ -5,95 +5,87 @@
  * Movie custom module file.
  */
 
-// use Drupal\node\Entity\NodeType;
-// use Drupal\Core\Link;
-// use Drupal\Core\Entity\ContentEntityInterface;
-// use Drupal\field\Entity\FieldStorageConfig;
-// use Drupal\views\ViewExecutable;
-// use Drupal\views\Plugin\views\query\QueryPluginBase;
-// use Drupal\Core\Url;
-// use Drupal\Core\Form\FormStateInterface;
-// use Drupal\Core\Routing\RouteMatchInterface;
+
 use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\EntityInterface;
 
-// /**
-//  * Implements hook_form_user_register_form_alter().
-//  *
-//  * @param $form
-//  * @param \Drupal\Core\Form\FormStateInterface $form_state
-//  * @param $form_id
-//  */
-
-// function movie_custom_form_user_register_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id){
-//   if ($form_id == 'user-register-form') {
-//     $form['pass1'] = array("#title" => t("Password"),
-//     "#type" => "password",
-//     "#required" => true
-//     );
-//     $form['pass2'] = array("#title" => t("Confirm Password"),
-//     "#type" => "password",
-//     "#required" => true
-//     );
-//   }
-// }
 
 
-// /**
-//  * Implements hook_form_alter().
-//  *
-//  * @param $form
-//  * @param \Drupal\Core\Form\FormStateInterface $form_state
-//  * @param $form_id
-//  */
-// function movie_custom_form_alter(&$form, FormStateInterface $form_state, $form_id){
-//   if ($form_id == 'user-register-form') {
-//     $form['pass1'] = array("#title" => t("Password"),
-//     "#type" => "password",
-//     "#required" => true
-//     );
-//     $form['pass2'] = array("#title" => t("Confirm Password"),
-//     "#type" => "password",
-//     "#required" => true
-//     );
-//   }
-// }
-
-/**
- * Implements hook_node_presave().
- * @param \Drupal\Core\Entity\EntityInterface $node
- */
-
-function movie_custom_node_presave(\Drupal\Core\Entity\EntityInterface $node){
-  //$node = \Drupal\node\Entity\Node::load(6);
-  // $node->setTitle('Edited Title');
-  // $node->set('body', 'this is the bew body');
-  // $now = new DateTime();
-  // $created = $now->getTimestamp();
-  // $pub_date = gmdate('Y-m-d\TH:i:s',$created);
-  // $node_save = $node->set('field_published_date',$pub_date);
-
-  // \Drupal::logger('movie_custom')->debug('presave'. $pub_date);
-
-//   $data = [
-//     'type'=>'article',
-//     'title'=>'Test blog',
-//     'uid'=>1
-//   ];
-
-//  //Drupal::logger('movie_custom')->info('node'.print_r($data));
-//   $node = Drupal::entityTypeManager()->getStorage('node')->create($data);
-//   $node->save();
-
-  // if($node->hasField =="field_published_date"){
-  //   $status = $node->get('field_status')->getValue()[0]['value'];
-  //   if(empty($node->get('field_published_date')->getValue())){
-  //     if($status ==1){
-  //       $now = new DateTime();
-  //       $created = $now->getTimestamp();
-  //       \Drupal::logger('movie_custom')->info('presave date==>'.$created);
-  //     }
-  //   }
-  // }
+function delete_nodes_example($nids, &$context){
+  $message = 'Deleting ALL Nodes ...';
+  $results = array();
+  foreach ($nids as $nid) {
+      $node = Node::load($nid);
+      $results[] = $node->delete();
+  }
+  $context['message'] = $message;
+  $context['results'] = $results;
 }
 
+
+
+function delete_nodes_finished($success, $results, $operations) {
+    // The 'success' parameter means no fatal PHP errors were detected. All
+    // other error management should be handled using 'results'.
+    if ($success) {
+        $message = \Drupal::translation()->formatPlural(
+            count($results),
+            'One post processed.', '@count posts processed.'
+        );
+    }
+    else {
+        $message = t('Finished with an error.');
+    }
+    \Drupal::messenger()->addStatus($message);
+}
+
+
+
+/**
+ *
+ */
+function movie_custom_theme() {
+  return [
+    'weather' => [
+      'variables' => [
+        'data' => [],
+        'url' => '',
+        'secret' => NULL,
+      ],
+    ],
+    'youtube_link_formatter' => [
+      'variables' => ['url' => NULL],
+      'template' => 'youtube-link-formatter',
+    ],
+  ];
+}
+
+
+function movie_custom_preprocess_html(&$variables) {
+  if (\Drupal::routeMatch()->getRouteName() == 'entity.taxonomy_term.canonical') {
+    $variables['term_id'] = \Drupal::routeMatch()->getRawParameter('taxonomy_term');
+  }
+	$current_path = \Drupal::service('path.current')->getPath();
+	$current_path_array = explode('/',$current_path);
+	if ($current_path_array[1] == 'user' && is_numeric($current_path_array[2])) {
+		$variables['attributes']['class'][] = 'usr-prfl';
+	}
+	if ($current_path_array[1] == 'user' && is_numeric($current_path_array[2]) && (isset($current_path_array[3]) && $current_path_array[3] == 'edit')) {
+		$variables['attributes']['class'][] = 'usr-prfl-edit';
+	}
+
+}
+
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function hook_examples_form_user_login_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  // Add a custom submit button to the login form.
+  $form['third_party_login'] = [
+    '#type' => 'submit',
+    '#value' => t('Login with Third-Party Provider'),
+    '#submit' => ['hook_examples_user_login_form_submit'], // Call the custom submit function.
+  ];
+}
