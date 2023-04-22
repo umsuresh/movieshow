@@ -1,0 +1,33 @@
+id: d7_glegal_conditions
+label: Legal Terms & Conditions
+migration_tags:
+  - Drupal 7
+  - Content
+#class: Drupal\legal\Plugin\migrate\source\d7\LegalConditions
+source:
+  plugin: d7_glegal_conditions
+process:
+  tc_id: tc_id
+  version: version
+  revision: revision
+  language: language
+  conditions: conditions
+  format: format
+  date: date
+  changes: changes
+  type:
+    plugin: default_value
+    default_value: glegal_conditions
+    langcode: language
+destination:
+  plugin: entity:glegal_conditions
+dependencies:
+  module:
+    - glegal
+    - migrate_drupal
+  enforced:
+    module:
+      - glegal
+provider:
+  - glegal
+  - migrate_drupal

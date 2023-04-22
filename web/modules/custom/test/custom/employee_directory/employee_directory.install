@@ -1,0 +1,110 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Employee Deirctory API Udated.
+ */
+
+/**
+ *
+ */
+function employee_directory_schema() {
+
+  $schema['employee_directory_api_data_updated'] = [
+    'description' => 'SAP Api updated reports.',
+    'fields' => [
+      'id' => [
+        'description' => 'The primary identifier for the record.',
+        'type' => 'serial',
+  // Tiny / small / medium / normal / big.
+        'size' => 'small',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => 'The {users}.uid that added employee id.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'api_url' => [
+        'description' => 'Api URL.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'api_response' => [
+        'description' => 'Api response data.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'updated_date' => [
+        'description' => 'Date of updating',
+        'type' => 'varchar',
+        'mysql_type' => 'datetime',
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  $schema['employee_structure_api_data_updated'] = [
+    'description' => 'SAP Api Employee Structure updated reports.',
+    'fields' => [
+      'id' => [
+        'description' => 'The primary identifier for the record.',
+        'type' => 'serial',
+  // Tiny / small / medium / normal / big.
+        'size' => 'small',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => 'The {users}.uid that added employee id.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'api_url' => [
+        'description' => 'Api URL.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'api_response' => [
+        'description' => 'Api response data.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'updated_date' => [
+        'description' => 'Date of updating',
+        'type' => 'varchar',
+        'mysql_type' => 'datetime',
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+
+}
+
+/**
+ * Added a field for image API response  stored.
+ */
+function employee_directory_update_80010() {
+  $spec = [
+    'type' => 'blob',
+  // Tiny / small / medium / normal / big.
+    'size' => 'big',
+    'description' => "Image Api response",
+    'not null' => FALSE,
+  ];
+  $schema = Database::getConnection()->schema();
+  $schema->addField('employee_structure_api_data_updated', 'profile_image_response', $spec);
+}

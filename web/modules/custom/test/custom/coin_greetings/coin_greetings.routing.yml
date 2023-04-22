@@ -1,0 +1,15 @@
+coin_greetings.settings:
+  path: '/admin/config/coin_greetings/big_day_wish_settings'
+  defaults:
+    _form: '\Drupal\coin_greetings\Form\EmployeeBigDayWishSettingsForm'
+    _title: 'Birthday / Work Anniversary wish mail template form'
+  requirements:
+    _permission: 'administer site configuration'
+
+coin_greetings.send_greeting:
+  path: '/send_greeting/{user_id}'
+  defaults:
+    _controller: '\Drupal\coin_greetings\Controller\GreetingController::sendGreetingMail'
+    user_id: ''
+  requirements:
+    _permission: 'access content'

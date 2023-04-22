@@ -1,0 +1,4 @@
+custom_layouts_grid:
+  css:
+    theme:
+      css/grid_gallery.css: {}

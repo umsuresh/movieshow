@@ -14,7 +14,11 @@
  * @Block(
  *   id = "weather_block",
  *   admin_label = @Translation("weather block"),
+<<<<<<< HEAD
  *   category = @Translation("Custom weather block example")
+=======
+ *   category = @Translation("Custom weather block")
+>>>>>>> eb7b7c9138405870c9ba72167655fac2f13bf77a
  * )
  */
 

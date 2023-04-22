@@ -1,0 +1,9 @@
+name: Coin Custom Greetings
+type: module
+description: 'Send birthday / Work Anniversary wish mail to the Employee.'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: Custom
+configure: coin_greetings.settings
+dependencies:
+  - drupal:token

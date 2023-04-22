@@ -1,0 +1,6 @@
+glegal.admin:
+  title: 'gLegal'
+  parent: user.admin_index
+  description: 'Groups Terms & Conditions.'
+  weight: -11
+  route_name: glegal.config_legal

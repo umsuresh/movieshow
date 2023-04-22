@@ -1,0 +1,6 @@
+name: Employee Directory
+description: Module for implementing employee directory.
+package: Custom
+configure: employee_directory.admin_settings
+type: module
+core_version_requirement: ^8.8 || ^9

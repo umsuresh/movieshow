@@ -1,0 +1,5 @@
+coin_greetings.settings:
+    title: Birthday / Work Anniversary wish mail template
+    parent: coin_config_form.admin_config_coin
+    route_name: coin_greetings.settings
+    weight: 98

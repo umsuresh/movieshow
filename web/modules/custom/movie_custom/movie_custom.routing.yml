@@ -14,6 +14,7 @@ movie_custom.form:
   requirements:
     _permission: 'access content'
 
+<<<<<<< HEAD
 movie_custom.model_form:
   path: '/model/model_form'
   defaults:
@@ -31,4 +32,13 @@ movie_custom.open_modal_form:
     _permission:  'access content'
   options:
     _admin_route: TRUE
+=======
+movie_custom.add_student:
+  path: '/students/add'
+  defaults:
+    _title: 'Add Students'
+    _form: '\Drupal\movie_custom\Form\StudentForm'
+  requirements:
+    _access: 'TRUE'
+>>>>>>> eb7b7c9138405870c9ba72167655fac2f13bf77a
 

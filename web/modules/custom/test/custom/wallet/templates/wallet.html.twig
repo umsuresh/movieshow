@@ -1,0 +1,114 @@
+{% if (data.user_status == "Active" and data.payroll_area == "KR") %}
+	{% if (data.wallet_status == "Active") %}
+		<div class="coin-wallet-block">
+			<span class="coin-wallet-status active">Active</span>
+			<div class="coin-wallet-body">
+				<div class="coin-wallet-balance">
+					<span class="coin-wallet-prefix">
+						OMR
+					</span>
+					<span class="coin-wallet-amount">
+						{{data.wallet_bal}}
+					</span>
+					<!-- wallet balance (e.g., 500) -->
+					<div class="coin-wallet-caption">Wallet Balance</div>
+				</div>
+				<div class="coin-wallet-transaction">
+					<div class="coin-wallet-current-month-consumption">
+						<div class="coin-wallet-current-month-consumption-caption">
+							Current Month
+							<br/>
+							consumption
+						</div>
+						<div class="coin-wallet-current-month-consumption-prefix">
+							OMR
+							{{data.current_month_cons}}
+							<!-- current month consumption (e.g., 100) -->
+						</div>
+					</div>
+					<div class="coin-wallet-last-transaction">
+						<span class="coin-wallet-last-transaction-details">
+							{{data.merchant}}
+							<!-- last transaction details (e.g., Pizza Hut - OMR 50) -->
+						</span>
+						<div class="coin-wallet-last-transaction-caption">
+							Last Transaction
+						</div>
+						<div class="coin-wallet-last-transaction-prefix">
+							{{data.last_trans_date}}
+							<!-- last transaction date (e.g., 25/12/2022) -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="coin-wallet-footer">
+				<a href="current-statement" class="coin-wallet-current-statement-link">View Current Statement</a>
+				<!-- link to view current statement iframe page -->
+				<a href="last-raised-statement" class="coin-wallet-last-statement-link">Last raised Statement</a>
+				<!-- link to last raised statement iframe page -->
+				<a href="wallet-details" class="coin-wallet-view-more-link">View more</a>
+				<!-- link to view more page -->
+			</div>
+		</div>
+	{% elseif( data.wallet_status == 'Hold') %}
+		<div class="coin-wallet-block">
+			<div class="coin-wallet-hold-overlay"></div>
+			<span class="coin-wallet-status hold">Hold</span>
+			<div class="coin-wallet-body">
+				<div class="coin-wallet-balance hold">
+					<span class="coin-wallet-prefix">
+						OMR
+					</span>
+					<span class="coin-wallet-amount">
+						{{data.wallet_bal}}
+					</span>
+					<!-- wallet balance (e.g., 500) -->
+					<div class="coin-wallet-caption">Wallet Balance</div>
+				</div>
+				<div class="coin-wallet-transaction">
+					<div class="coin-wallet-current-month-consumption hold">
+						<div class="coin-wallet-current-month-consumption-caption">
+							Current Month
+							<br/>
+							consumption
+						</div>
+						<div class="coin-wallet-current-month-consumption-prefix">
+							OMR
+							{{data.current_month_cons}}
+							<!-- current month consumption (e.g., 100) -->
+						</div>
+					</div>
+					<div class="coin-wallet-last-transaction hold">
+						<span class="coin-wallet-last-transaction-details">
+							{{data.merchant}}
+							<!-- last transaction details (e.g., Pizza Hut - OMR 50) -->
+						</span>
+						<div class="coin-wallet-last-transaction-caption">
+							Last Transaction
+						</div>
+						<div class="coin-wallet-last-transaction-prefix">
+							{{data.last_trans_date}}
+							<!-- last transaction date (e.g., 25/12/2022) -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="coin-wallet-footer">
+				<a href="" class="coin-wallet-current-statement-link hold">View Current Statement</a>
+				<!-- link to view current statement iframe page -->
+				<a href="" class="coin-wallet-last-statement-link hold">Last raised Statement</a>
+				<!-- link to last raised statement iframe page -->
+				<a href="wallet-details" class="coin-wallet-view-more-link hold">View more</a>
+				<!-- link to view more page -->
+			</div>
+		</div>
+	{% else %}
+		<div class="coin-disabled-wallet">
+			<img src="{{data.wallet_image}}" alt="No Active Wallet">
+		</div>
+	{% endif %}
+{% else %}
+	<div class="coin-disabled-wallet">
+		<img src="{{data.wallet_image}}" alt="No Active Wallet">
+	</div>
+{% endif %}

@@ -1,0 +1,17 @@
+coin_config_form.admin_config_coin:
+  path: '/admin/config/coin'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Coin'
+  requirements:
+    _permission: 'administer site configuration'
+
+coin_config_form.wallet_image_configuration_form:
+  path: '/admin/config/coin/wallet-image'
+  defaults:
+    _form: '\Drupal\coin_config_form\Form\WalletImageConfigurationForm'
+    _title: 'Wallet image configuration'
+  requirements:
+    _role: 'administrator+content_editor'
+  options:
+    _admin_route: TRUE

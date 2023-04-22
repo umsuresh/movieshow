@@ -1,0 +1,17 @@
+services:
+  movie_custom.message_exit:
+    class: Drupal\movie_custom\EventSubscriber\UserLoginSubscriber
+    arguments: ['@current_user','@messenger', '@date.formatter']
+    tags:
+      - { name: 'event_subscriber' }
+
+  movie_custom.event_subscriber_sample:
+    class: Drupal\movie_custom\EventSubscriber\SampleEventSubScriber
+    tags:
+      - { name: 'event_subscriber' }
+
+  movie_custom.redirect_subscriber:
+    class: Drupal\movie_custom\EventSubscriber\RedirectEventSubscriber
+    arguments: []
+    tags:
+      - {name: event_subscriber}

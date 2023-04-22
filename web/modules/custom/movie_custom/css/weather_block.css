@@ -1,0 +1,30 @@
+#block-weatherblock {
+    background-color: #557eb3;
+    padding: 7px;
+    width: auto;
+    margin-bottom: 10px;
+}
+
+/* CSSTerm.com Simple CSS menu */
+
+#block-weatherblock ul {
+    margin: 0; 
+    padding: 0;
+    width:185px;
+    list-style-type: none;
+}
+
+#block-weatherblock ul li  {
+    text-decoration: none;
+    color: white; 
+    padding: 10.5px 11px;
+    background-color: #005555;
+    display:block;
+}
+ 
+
+ 
+#block-weatherblock ul li:hover, #block-weatherblock ul li .current {
+    color: white;
+    background-color: #5FD367;
+}

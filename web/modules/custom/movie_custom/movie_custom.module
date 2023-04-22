@@ -11,6 +11,33 @@ use Drupal\Core\Entity\EntityInterface;
 
 
 
+
+//hook prerender attached the libraies 
+
+/**
+* Implements hook_preprocess_page().
+*/
+function movie_custom_preprocess_page(&$variables) { 
+    // dump($variables);
+    $variables['#attached']['library'][] = 'movie_custom/movie_custom';
+}
+
+
+
+/* implement hook
+*/
+ 
+function moviecustom_theme_suggestions_html_alter(array &$suggestions, array $variables) {
+	
+	 if ($node = \Drupal::routeMatch()->getParameter('node')) {
+	     $suggestions[] = 'html__' . $node->bundle();
+	 }
+	
+}
+
+
+    // The 'success' batch process
+
 function delete_nodes_example($nids, &$context){
   $message = 'Deleting ALL Nodes ...';
   $results = array();
@@ -23,7 +50,7 @@ function delete_nodes_example($nids, &$context){
 }
 
 
-
+    // The 'success' batch process
 function delete_nodes_finished($success, $results, $operations) {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.

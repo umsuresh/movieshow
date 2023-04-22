@@ -1,0 +1,12 @@
+coin_config_form.admin_config_coin:
+  title: 'COIN'
+  route_name: coin_config_form.admin_config_coin
+  parent: system.admin_config
+  description: 'Configure for COIN'
+  weight: 100
+coin_config_form.wallet_image_configuration_form:
+  title: 'Wallet Cofiguration'
+  route_name: coin_config_form.wallet_image_configuration_form
+  parent: coin_config_form.admin_config_coin
+  description: 'Configure the wallet image'
+  weight: 99

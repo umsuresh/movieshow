@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Module file for wallet_module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ *
+ * @see https://www.drupal.org/documentation/help-text-standards
+ *
+ * @see hook_help()
+ */
+function wallet_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.wallet':
+      // Help text for the admin section, using the module name in the path.
+      return $this->t("This is help text created in wallet implementation of hook_help().");
+  }
+}
+
+/**
+ *
+ */
+function wallet_theme($existing, $type, $theme, $path) {
+  return [
+    'wallet' => [
+      'variables' => [
+        'data' => [],
+        'url' => '',
+        'secret' => NULL,
+      ],
+    ],
+    'current_statement' => [
+      'variables' => [
+        'data' => [],
+      ],
+    ],
+    'last_raised_statement' => [
+      'variables' => [
+        'data' => [],
+      ],
+    ],
+    'wallet_details' => [
+      'variables' => [
+        'data' => [],
+      ],
+    ],
+  ];
+}

@@ -3,7 +3,11 @@
         'name' => 'drupal/recommended-project',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
+<<<<<<< HEAD
         'reference' => 'aa1bfb349770a33bba9fa823921be7d59237c19c',
+=======
+        'reference' => 'd09c62ae1cd086a16041d725d3e8ece5efba3e2c',
+>>>>>>> eb7b7c9138405870c9ba72167655fac2f13bf77a
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -290,9 +294,15 @@
             'dev_requirement' => false,
         ),
         'drupal/captcha' => array(
+<<<<<<< HEAD
             'pretty_version' => '1.10.0',
             'version' => '1.10.0.0',
             'reference' => '8.x-1.10',
+=======
+            'pretty_version' => '1.9.0',
+            'version' => '1.9.0.0',
+            'reference' => '8.x-1.9',
+>>>>>>> eb7b7c9138405870c9ba72167655fac2f13bf77a
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../web/modules/contrib/captcha',
             'aliases' => array(),
@@ -529,6 +539,18 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+<<<<<<< HEAD
+=======
+        'drupal/devel_php' => array(
+            'pretty_version' => '1.5.0',
+            'version' => '1.5.0.0',
+            'reference' => '8.x-1.5',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/devel_php',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+>>>>>>> eb7b7c9138405870c9ba72167655fac2f13bf77a
         'drupal/entity' => array(
             'pretty_version' => '1.4.0',
             'version' => '1.4.0.0',
@@ -562,6 +584,15 @@
             'reference' => '8.x-1.5',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../web/modules/contrib/group',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'drupal/image_slider' => array(
+            'pretty_version' => '1.3.0',
+            'version' => '1.3.0.0',
+            'reference' => '8.x-1.3',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/image_slider',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -622,12 +653,37 @@
         'drupal/recommended-project' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
+<<<<<<< HEAD
             'reference' => 'aa1bfb349770a33bba9fa823921be7d59237c19c',
+=======
+            'reference' => 'd09c62ae1cd086a16041d725d3e8ece5efba3e2c',
+>>>>>>> eb7b7c9138405870c9ba72167655fac2f13bf77a
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+<<<<<<< HEAD
+=======
+        'drupal/restui' => array(
+            'pretty_version' => '1.21.0',
+            'version' => '1.21.0.0',
+            'reference' => '8.x-1.21',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/restui',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'drupal/smtp' => array(
+            'pretty_version' => '1.2.0',
+            'version' => '1.2.0.0',
+            'reference' => '8.x-1.2',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/smtp',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+>>>>>>> eb7b7c9138405870c9ba72167655fac2f13bf77a
         'drupal/taxonomy_bulk_actions' => array(
             'pretty_version' => '1.0.3',
             'version' => '1.0.3.0',
@@ -879,6 +935,15 @@
             'install_path' => __DIR__ . '/../phpcompatibility/php-compatibility',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v6.8.0',
+            'version' => '6.8.0.0',
+            'reference' => 'df16b615e371d81fb79e506277faea67a1be18f1',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'phpmd/phpmd' => array(
             'pretty_version' => '2.13.0',

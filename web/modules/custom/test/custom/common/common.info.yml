@@ -1,0 +1,6 @@
+name: Common
+type: module
+description: 'Describe commom functionality of coin'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: Custom

@@ -22,6 +22,12 @@ class MovieCustomController extends ControllerBase {
     ];
   }
 
+
+  public function batchprocess(){
+
+    
+  }
+
 }
 
 

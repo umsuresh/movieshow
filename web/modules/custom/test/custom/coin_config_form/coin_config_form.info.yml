@@ -1,0 +1,6 @@
+name: Custom coin configuration
+type: module
+description: 'Describe the coin configuration'
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: Custom

@@ -5,6 +5,7 @@ description:  This is the movie based custom theme
 alt text: 'Screenshot of movies, Drupal front-end theme.'
 package: Custom
 core_version_requirement: ^9 || ^10
+#base theme: bootstrap4
 # This is one way of attaching a library to the page.
 libraries:
   - movies/global-styling

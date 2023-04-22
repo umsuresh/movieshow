@@ -1,0 +1,6 @@
+name: Schemes & Benefits API
+description: Define's a custom serialization
+package: Custom
+type: module
+core: 8.x
+core_version_requirement: ^8 || ^9 || ^10

@@ -1,0 +1,199 @@
+/* #206079 */
+/* #E6DADB */
+/* #ECF4F4 */
+/* #000000 */
+.coin-wallet-block {
+  width: 100%;
+  padding: 20px;
+  background-image: url("/modules/custom/wallet/images/wallet-bg.jpg");
+  background-size: cover;
+  border-radius: 10px;
+  position: relative;
+}
+
+.coin-wallet-hold-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0%;
+  left: 0%;
+  background-color: var(--pur-white);
+  opacity: 0.4;
+}
+
+.coin-wallet-status {
+  display: inline-block;
+  margin-left: -20px;
+  padding: 5px 20px 5px 10px;
+  color: var(--pur-white);
+  font-size: 18px;
+  font-weight: 600;
+  background-color: #e74e6c;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 10px;
+}
+
+.coin-wallet-body {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: -20px;
+}
+
+.coin-wallet-balance {
+  color: var(--pur-white);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.coin-wallet-caption,
+.coin-wallet-current-month-consumption-caption,
+.coin-wallet-last-transaction-caption {
+  font-size: 85%;
+  opacity: 0.8;
+}
+
+.coin-wallet-prefix,
+.coin-wallet-current-month-consumption-prefix,
+.coin-wallet-last-transaction-prefix {
+  font-weight: 600;
+}
+
+.coin-wallet-amount {
+  font-size: 170%;
+}
+
+.coin-wallet-transaction {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.coin-wallet-current-month-consumption {
+  color: var(--pur-white);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.coin-wallet-current-month-consumption-caption {
+  margin-bottom: 5px;
+}
+
+.coin-wallet-last-transaction {
+  position: relative;
+  color: var(--pur-white);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.coin-wallet-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 5px;
+}
+
+.coin-wallet-current-statement-link,
+.coin-wallet-last-statement-link,
+.coin-wallet-view-more-link,
+.coin-wallet-block a:hover {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--pur-white);
+  text-decoration: none;
+}
+
+.coin-wallet-last-transaction-details {
+  position: absolute;
+  width: max-content;
+  left: calc(100% + 21px);
+  top: calc(50% - 21px);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--primary-one);
+  background: var(--secondary-three);
+  border-radius: 6px;
+  padding: 10px 20px;
+  display: none;
+}
+
+span.coin-wallet-last-transaction-details:before {
+  content: "";
+  width: 20px;
+  height: 100%;
+  background-color: var(--secondary-three);
+  position: absolute;
+  top: 0px;
+  right: calc(100% - 1px);
+  clip-path: polygon(0 50%, 100% 85%, 100% 15%);
+}
+
+.coin-wallet-last-transaction:hover .coin-wallet-last-transaction-details,
+.coin-wallet-last-transaction:after {
+  display: block;
+}
+
+.coin-wallet-block .hold {
+  color: var(--pur-white);
+}
+
+.coin-wallet-status.active {
+  color: var(--blue-link);
+  background-color: var(--secondary-five);
+}
+
+.coin-wallet-status.hold {
+  color: var(--pur-white);
+  position: relative;
+  z-index: 3;
+}
+.coin-wallet-view-more-link.hold {
+  color: var(--pur-white);
+  position: relative;
+  z-index: 3;
+}
+
+.coin-wallet-last-transaction.hold {
+  position: static;
+}
+
+.coin-disabled-wallet {
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.coin-disabled-wallet img {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  span.coin-wallet-last-transaction-details {
+    width: 100px;
+    position: absolute;
+    top: calc(100% + 20px);
+    left: 0px;
+  }
+  span.coin-wallet-last-transaction-details:before {
+    content: "";
+    width: 20%;
+    height: 17px;
+    position: absolute;
+    top: -16px;
+    left: 40%;
+    clip-path: polygon(50% 0, 0 100%, 100% 100%);
+  }
+}

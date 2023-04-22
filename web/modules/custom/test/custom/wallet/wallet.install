@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Wallet API response log .
+ */
+
+/**
+ *
+ */
+function wallet_schema() {
+
+  $schema['wallet_api_data_response'] = [
+    'description' => 'wallet Api updated reports.',
+    'fields' => [
+      'id' => [
+        'description' => 'The primary identifier for the record.',
+        'type' => 'serial',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => 'The {users}.uid that added employee id.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'api_url' => [
+        'description' => 'Api URL.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'api_response' => [
+        'description' => 'Api response data.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'updated_date' => [
+        'description' => 'Date of updating',
+        'type' => 'varchar',
+        'mysql_type' => 'datetime',
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+
+}
